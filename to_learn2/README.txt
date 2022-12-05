@@ -9,6 +9,22 @@
 - read file1 (get command (cmd2) from file1)
 - and write the output in file2
 
+
+--------------------------------------------
+- take commands and files as arguments
+- split theme
+- execute wish syscall and get full path
+- then check if accessible
+- execute command with arguments
+
+- fork
+- execute commad in input fd
+- get output of the command
+- and write it in output fd
+
+
+
+
 ---------------------------------------------
 - in two process they can have same file descriptor value but with different files
 - unique in current process
@@ -53,6 +69,37 @@ signals
 - SIGCONT: continue the process
 
 
+/*
+int fd = open("res", O_CREAT | O_TRUNC | O_WRONLY);
+	char *path[5] = {"whereis", "ls", NULL, NULL, NULL};
+	path[1] = cmd;
+	// path[1] = arr[1];
+	dup2(fd, STDOUT_FILENO);
+	if (execv("/usr/bin/whereis", path) == -1)
+		write(1, "Error on executing command\n", 40);
+
+	close(fd);
+	
+	return NULL;
+*/
+
+
+/*
+ 	int pid = fork();
+	if(pid == 0)
+	{
+		ft_getfull_path("ls");
+	}
+	if (pid > 0)
+	{
+		wait(NULL);
+		int fd = open("res", O_RDONLY);
+		char *res = get_next_line(fd);
+		write(1, res, ft_strlen(res));
+		//printf("-> %s\n", res);
+		close(fd);
+	}
+*/
 
 
 
