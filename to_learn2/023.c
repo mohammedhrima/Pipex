@@ -61,9 +61,9 @@ int main(int argc, char **argv)
 		close(fd[1]);
 		execv(cmd2, arr2);
 	}
+	waitpid(pid1, NULL, 0);
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid1, NULL, 0);
 	//access("in", F_OK); //F_OK check the existance
 	
 	

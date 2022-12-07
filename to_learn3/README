@@ -1,0 +1,55 @@
+POSIX: Portable Operating System Interface for Unix
+SUS: Single Unix Specification
+
+process:
+	address space
+	user ids
+	file descriptors
+	environment
+	current and root directory
+
+
+Program:
+	stack
+	heap
+	heap
+	code
+
+memory table:
+	high address ->
+									command-line arguments and environment variables
+					stack
+				      |
+
+
+					  |
+					 heap
+				
+				uninitialized data (bss)
+				
+				initilized data
+					text
+	low address ->			
+
+
+uninitialized data: global varibales without values (bss)
+initialized data: global varibales with initial values
+
+1-fork:
+void* address = mmap(5000) : allocate 5000bytes
+munmap(address): dealocate the address varibales
+
+for old unix OS
+fork used to create new space on stack memory and copy everything
+
+for new ones
+both processes are pointing on same space in memory, ones one of them is mking a modification,
+new space is allocated (foe the modified part in memory only) and the modification is made there
+
+2-exec
+load program
+reset current program , free space and allocate space for te=he new created program (empty stack/ copy of code / empty heap(no heap allocated))
+
+to exit a process call : exit(0)
+
+- try to ue return negative numbers for error, and for each number set a message error

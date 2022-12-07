@@ -64,7 +64,7 @@ dup2 -> (files,fd) //take file and the file descriptor too copy in
 - so the two files descriptor will be pointed on same file
 
 signals
-- SIGKILL: termnate the process
+- SIGKILL: terminate the process
 - SIGSTOP: stop the process
 - SIGCONT: continue the process
 

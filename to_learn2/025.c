@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include "libft/libft.h"
+//#include "libft/libft.h"
 
 // handle all error after
 char *ft_getfull_path(char *cmd)
@@ -50,9 +50,9 @@ int main(int argc, char **argv)
 	{
 		wait(NULL);
 		int fd = open("in", O_RDONLY);
-		char *res = get_next_line(fd);
+		//char *res = get_next_line(fd);
 		//write(1, res, ft_strlen(res));
-		printf("-> %s", res);
+		//printf("-> %s", res);
 		close(fd);
 	}
 
