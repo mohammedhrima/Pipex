@@ -1,0 +1,16 @@
+total 112
+drwxr-xr-x  15 mhrima  2019   510 Dec  8 22:57 .
+drwxr-xr-x   8 mhrima  2019   272 Dec  8 06:26 ..
+-rw-r--r--   1 mhrima  2019   628 Dec  8 05:13 001.c
+-rw-r--r--   1 mhrima  2019  1293 Dec  8 05:11 002.c
+-rw-r--r--   1 mhrima  2019  1029 Dec  8 05:17 003.c
+-rw-r--r--   1 mhrima  2019   962 Dec  8 22:55 004V.c
+-rw-r--r--   1 mhrima  2019   314 Dec  8 08:09 005.c
+-rw-r--r--   1 mhrima  2019   464 Dec  8 22:14 006.c
+-rw-r--r--   1 mhrima  2019   609 Dec  8 22:53 007.c
+-rw-r--r--   1 mhrima  2019   730 Dec  8 22:57 008.c
+-rw-r--r--   1 mhrima  2019  1430 Dec  8 22:30 README
+-rwxr-xr-x   1 mhrima  2019  8812 Dec  8 22:57 a.out
+-rwxr-xr-x   1 mhrima  2019    33 Dec  8 22:15 in
+-rw-r--r--   1 mhrima  2019     0 Dec  8 22:57 out
+-r-xr-x---   1 mhrima  2019    41 Dec  8 22:29 tricky.txt

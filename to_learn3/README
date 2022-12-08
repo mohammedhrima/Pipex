@@ -40,6 +40,7 @@ initialized data: global varibales with initial values
 1-fork:
 void* address = mmap(5000) : allocate 5000bytes
 munmap(address): dealocate the address varibales
+- copy the instruction
 
 for old unix OS
 fork used to create new space on stack memory and copy everything
@@ -55,3 +56,9 @@ reset current program , free space and allocate space for the new created progra
 to exit a process call : exit(0)
 
 - try to ue return negative numbers for error, and for each number set a message error
+
+3- pipe
+create a multipipe that read from 0 and write it from 1
+
+4- dup2
+dup2(to, from) -> redirect "from" to "to"

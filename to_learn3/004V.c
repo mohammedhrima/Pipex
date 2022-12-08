@@ -10,7 +10,7 @@ int main(void)
 	int fd2[2];
 	fd2[0] = open("in", O_RDWR | O_CREAT, 0777);
 	fd2[1] = open("out", O_RDWR | O_CREAT,0777);
-	dup2(fd2[0], STDIN_FILENO);
+	//dup2(fd2[0], STDIN_FILENO);
 	//dup2(fd2[1], STDOUT_FILENO);
 
 

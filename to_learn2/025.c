@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-//#include "libft/libft.h"
+// #include "libft/libft.h"
 
 // handle all error after
 char *ft_getfull_path(char *cmd)
@@ -16,7 +16,7 @@ char *ft_getfull_path(char *cmd)
 	if (execv("/usr/bin/whereis", path) == -1)
 		write(1, "Error on executing command\n", 40);
 	close(fd);
-	
+
 	return NULL;
 }
 
@@ -34,8 +34,8 @@ int main(int argc, char **argv)
 	cmd2 = ft_strjoin("/usr/bin", arr2[0]);
 	fd[0] = open(argv[1], O_RDWR | O_CREAT,0777);
 	fd[1] = open(argv[4], O_RDWR | O_CREAT, 0777);*/
-	//char *arr1[] = {"ls", "-l", NULL, NULL, NULL};
-	// ft_getfull_path(arr1);
+	// char *arr1[] = {"ls", "-l", NULL, NULL, NULL};
+	//  ft_getfull_path(arr1);
 	/*int fd0 = open("res2", O_CREAT | O_TRUNC | O_WRONLY);
 	char *path[5] = {"whereis", "ls", NULL, NULL, NULL};
 	// path[1] = arr[1];
@@ -44,15 +44,15 @@ int main(int argc, char **argv)
 	if (execv("/usr/bin/whereis", path) == -1)
 		write(1, "Error on executing command\n", 40);*/
 	int pid = fork();
-	if(pid == 0)
+	if (pid == 0)
 		ft_getfull_path("ls");
 	if (pid > 0)
 	{
 		wait(NULL);
 		int fd = open("in", O_RDONLY);
-		//char *res = get_next_line(fd);
-		//write(1, res, ft_strlen(res));
-		//printf("-> %s", res);
+		// char *res = get_next_line(fd);
+		// write(1, res, ft_strlen(res));
+		// printf("-> %s", res);
 		close(fd);
 	}
 
