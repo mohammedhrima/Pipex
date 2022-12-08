@@ -1,5 +1,7 @@
 POSIX: Portable Operating System Interface for Unix
 SUS: Single Unix Specification
+I/O : input / output
+system programs / application programs
 
 process:
 	address space
@@ -48,7 +50,7 @@ new space is allocated (foe the modified part in memory only) and the modificati
 
 2-exec
 load program
-reset current program , free space and allocate space for te=he new created program (empty stack/ copy of code / empty heap(no heap allocated))
+reset current program , free space and allocate space for the new created program (empty stack/ copy of code / empty heap(no heap allocated))
 
 to exit a process call : exit(0)
 

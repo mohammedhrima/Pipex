@@ -23,8 +23,6 @@
 - and write it in output fd
 
 
-
-
 ---------------------------------------------
 - in two process they can have same file descriptor value but with different files
 - unique in current process
@@ -55,6 +53,7 @@ execlp
 - "execvp" take arguments as array
 - "execvpe" e stands for environment varibale
 - exec functions run executable file / not run command lines
+- replace cureent process with the new command
 
 dup -> (file) //take the files as paramater
 - create a copy of my current file descriptor
