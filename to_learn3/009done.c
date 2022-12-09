@@ -11,8 +11,8 @@ int main(void)
 	if (pipe(fd) < 0)
 		return 1;
 
-	int in = open("in", O_RDWR | O_CREAT);
-	int out = open("out", O_RDWR | O_CREAT | O_TRUNC);
+	int in = open("in", O_RDWR | O_CREAT, 0777);
+	int out = open("out", O_RDWR | O_CREAT | O_TRUNC, 0777);
 
 	pid_t pid1 = fork();
 	char str[3] ;//= "abcd";
@@ -56,7 +56,6 @@ int main(void)
 		wait(NULL);
 		close(fd[0]);
 	}
-
 
 	return 0;
 }
