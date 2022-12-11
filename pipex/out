@@ -1,0 +1,9 @@
+total 64
+-rw-r--r--   1 mhrima  2019   1190 Dec 11 18:31 Makefile
+-rw-r--r--   1 mhrima  2019      0 Dec 11 18:32 in
+drwxr-xr-x  53 mhrima  2019   1802 Dec 11 18:31 libft
+-rwxr-xr-x   1 mhrima  2019      0 Dec 11 20:24 out
+-rw-r--r--   1 mhrima  2019    442 Dec 11 20:23 out1
+-rwxr-xr-x   1 mhrima  2019  14172 Dec 11 20:24 pipex
+-rw-r--r--   1 mhrima  2019   2312 Dec 11 20:23 pipex.c
+-rw-r--r--   1 mhrima  2019   1056 Dec 11 18:31 pipex.h

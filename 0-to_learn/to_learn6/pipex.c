@@ -54,12 +54,13 @@ int main(int argc, char **argv, char *envp[])
 	exit_code = 0;
 	arr1 = ft_split2(argv[2], ' ', 3);
 	arr2 = ft_split2(argv[3], ' ', 3);
+	in = open(argv[1], O_RDONLY, 0777);
+	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+
 	paths = ft_split(grep(envp, "PATH"), ':');
 	cmd1 = cmd_path(arr1[0], paths);
 	cmd2 = cmd_path(arr2[0], paths);
 	free(paths);
-	in = open(argv[1], O_RDONLY, 0777);
-	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	if (in < 0)
 		ft_putendl_fd(ft_strjoin("no such file or directory: ", argv[1]), 2);
 	if (out < 0)
@@ -90,22 +91,18 @@ int main(int argc, char **argv, char *envp[])
 	{
 		dup2(in, STDIN_FILENO);
 		dup2(fd[1], STDOUT_FILENO);
-		if (in >= 0 && cmd1)
-			exit_code = execve(cmd1, arr1, NULL);
 		close(fd[0]);
 		close(fd[1]);
-		free(arr1);
 		free(arr2);
-		free(cmd1);
 		free(cmd2);
 		close(in);
 		if (out > 0)
 			close(out);
-		exit(exit_code);
+		if (in >= 0 && cmd1)
+			execve(cmd1, arr1, NULL);
 	}
 	else if (pid1 > 0)
 	{
-		waitpid(pid1, NULL, 0);
 		close(fd[1]);
 		free(cmd1);
 		free(arr1);
@@ -122,21 +119,25 @@ int main(int argc, char **argv, char *envp[])
 			close(fd[0]);
 			free(cmd2);
 			free(arr2);
+			if (out > 0)
+				close(out);
 		}
 		else if (pid2 == 0)
 		{
 			if (out != STDOUT_FILENO)
 				dup2(out, STDOUT_FILENO);
 			dup2(fd[0], STDIN_FILENO);
-			if (cmd2)
-				exit_code = execve(cmd2, arr2, NULL);
 			close(fd[0]);
 			free(arr2);
 			free(cmd2);
 			if (out != STDOUT_FILENO)
 				close(out);
-			exit(exit_code);
+			if (cmd2)
+				execve(cmd2, arr2, NULL);
 		}
 	}
 	return (0);
 }
+/*
+verify
+*/
