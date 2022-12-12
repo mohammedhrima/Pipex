@@ -38,7 +38,7 @@ char *grep(char *arr[], char *str)
 	}
 	return NULL;
 }
-
+#include <string.h>
 int main(int argc, char **argv, char *envp[])
 {
 	char **arr1;
