@@ -10,19 +10,39 @@ char *cmd_path(char *cmd0, char **paths)
 	cmd2 = NULL;
 	if (access(cmd0, F_OK) == 0 && access(cmd0, X_OK) == 0)
 		return cmd0;
-	cmd1 = ft_strjoin("/", cmd0);
+	if(cmd0[0] != '/')
+		cmd1 = ft_strjoin("/", cmd0);
+	else
+		cmd1 = ft_strdup(cmd0);
 	if (access(cmd1, F_OK) == 0 && access(cmd1, X_OK) == 0)
 		return cmd1;
 	while (paths && cmd0 && paths[i])
 	{
 		cmd2 = ft_strjoin(paths[i], cmd1);
 		if (access(cmd2, F_OK) == 0 && access(cmd2, X_OK) == 0)
+		{
+			free(cmd1);
 			return cmd2;
+		}
 		free(cmd2);
 		cmd2 = NULL;
 		i++;
 	}
+	free(cmd1);
 	return (cmd2);
+}
+
+void Free(char **arr)
+{
+	int i;
+
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
 }
 
 char *grep(char *arr[], char *str)
@@ -38,7 +58,8 @@ char *grep(char *arr[], char *str)
 	}
 	return NULL;
 }
-#include <string.h>
+
+
 int main(int argc, char **argv, char *envp[])
 {
 	char **arr1;
@@ -57,10 +78,17 @@ int main(int argc, char **argv, char *envp[])
 	exit_code = 0;
 	arr1 = ft_split2(argv[2], ' ', 3);
 	arr2 = ft_split2(argv[3], ' ', 3);
-	paths = ft_split(grep(envp, "PATH"), ':');
+	paths = ft_split(grep(envp, "PATH") + 5, ':');
+	int i = 0;
+	while (paths[i])
+	{
+		printf("%s\n", paths[i]);
+		i++;
+	}
+	
 	cmd1 = cmd_path(arr1[0], paths);
 	cmd2 = cmd_path(arr2[0], paths);
-	free(paths);
+	Free(paths);
 	in = open(argv[1], O_RDONLY, 0777);
 	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	if (in < 0)
@@ -83,7 +111,7 @@ int main(int argc, char **argv, char *envp[])
 	{
 		free(cmd1);
 		cmd1 = NULL;
-		free(arr1);
+		Free(arr1);
 		arr1 = NULL;
 	}
 	pid1 = fork();
@@ -105,7 +133,7 @@ int main(int argc, char **argv, char *envp[])
 
 		close(fd[1]);
 		free(cmd1);
-		free(arr1);
+		Free(arr1);
 		close(in);
 	}
 	pid2 = fork();
@@ -118,7 +146,7 @@ int main(int argc, char **argv, char *envp[])
 	{
 		close(fd[0]);
 		free(cmd2);
-		free(arr2);
+		Free(arr2);
 	}
 	else if (pid2 == 0)
 	{
@@ -131,5 +159,6 @@ int main(int argc, char **argv, char *envp[])
 	}
 	waitpid(pid1, &status, 0);
 	waitpid(pid2, &status, 0);
+	system("leaks pipex");
 	return (WEXITSTATUS(status));
 }
