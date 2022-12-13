@@ -1,161 +1,52 @@
-#include "pipex.h"
+//#include "pipex.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdio.h>
+#define NUM 5
 
-char *cmd_path(char *cmd0, char **paths)
+int main(void)
 {
-	int i;
-	char *cmd1;
-	char *cmd2;
-
-	i = 0;
-	cmd2 = NULL;
-	if (access(cmd0, F_OK) == 0 && access(cmd0, X_OK) == 0)
-		return cmd0;
-	if(cmd0[0] != '/')
-		cmd1 = ft_strjoin("/", cmd0);
-	else
-		cmd1 = ft_strdup(cmd0);
-	if (access(cmd1, F_OK) == 0 && access(cmd1, X_OK) == 0)
-		return cmd1;
-	while (paths && cmd0 && paths[i])
+	int fd[NUM][2];
+	int pids[NUM];
+	int i = 0;
+	while (i < NUM)
 	{
-		cmd2 = ft_strjoin(paths[i], cmd1);
-		if (access(cmd2, F_OK) == 0 && access(cmd2, X_OK) == 0)
+		pipe(fd[i]);
+		if (pipe(fd[i]) == -1)
 		{
-			free(cmd1);
-			return cmd2;
+			printf("Error with creating pipe\n");
+			return -1;
 		}
-		free(cmd2);
-		cmd2 = NULL;
 		i++;
 	}
-	free(cmd1);
-	return (cmd2);
-}
-
-void Free(char **arr)
-{
-	int i;
-
+	int x = 1;
+	write(fd[0][1], &x, sizeof(int));
 	i = 0;
-	while (arr[i])
+	while (i < NUM - 1)
 	{
-		free(arr[i]);
+		pids[i] = fork();
+		if (pids[i] < 0)
+			break;
+		if (pids[i] == 0)
+		{
+			int y;
+			read(fd[i][0], &y, sizeof(int));
+			printf("i -> %d y -> %d\n", i, y);
+			y++;
+			write(fd[i + 1][1], &y, sizeof(int));
+		}
 		i++;
 	}
-	free(arr);
-}
-
-char *grep(char *arr[], char *str)
-{
-	int i;
-
+	int z;
+	read(fd[i][0],&z, sizeof(int));
+	printf("-> %d\n",z);
 	i = 0;
-	while (arr[i])
+	while (i < NUM - 1)
 	{
-		if (ft_strstr(arr[i], str))
-			return (arr[i]);
+		wait(NULL);
 		i++;
 	}
-	return NULL;
-}
-
-
-int main(int argc, char **argv, char *envp[])
-{
-	char **arr1;
-	char **arr2;
-	char *cmd1;
-	char *cmd2;
-	char **paths;
-	int in;
-	int out;
-	int fd[2];
-	int exit_code;
-	pid_t pid1;
-	pid_t pid2;
-	int status;
-
-	exit_code = 0;
-	arr1 = ft_split2(argv[2], ' ', 3);
-	arr2 = ft_split2(argv[3], ' ', 3);
-	paths = ft_split(grep(envp, "PATH") + 5, ':');
-	cmd1 = cmd_path(arr1[0], paths);
-	cmd2 = cmd_path(arr2[0], paths);
-	Free(paths);
-	in = open(argv[1], O_RDONLY, 0777);
-	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	if (out < 0)
-	{
-		perror("Error");
-		return 1;
-	}
-	if (in < 0)
-		ft_putendl_fd(ft_strjoin("no such file or directory: ", argv[1]), 2);
-	if (!cmd1 && in >= 0)
-	{
-		ft_putendl_fd(ft_strjoin("command not found: ", arr1[0]), 2);
-		cmd1 = arr1[0];
-	}
-	if (!cmd2)
-	{
-		ft_putendl_fd(ft_strjoin("command not found: ", arr2[0]), 2);
-	}
-	if (pipe(fd) < 0)
-	{
-		perror("Error");
-		exit(-1);
-	}
-	if (in < 0)
-	{
-		free(cmd1);
-		cmd1 = NULL;
-		Free(arr1);
-		arr1 = NULL;
-	}
-	pid1 = fork();
-	if (pid1 < 0)
-	{
-		perror("Error");
-		exit(-1);
-	}
-	else if (pid1 == 0)
-	{
-		dup2(in, STDIN_FILENO);
-		close(fd[0]);
-		dup2(fd[1], STDOUT_FILENO);
-		if (execve(cmd1, arr1, NULL) == -1)
-			exit(EXIT_FAILURE);
-	}
-	else if (pid1 > 0)
-	{
-
-		close(fd[1]);
-		free(cmd1);
-		Free(arr1);
-		close(in);
-	}
-	pid2 = fork();
-	if (pid2 < 0)
-	{
-		perror("Error");
-		exit(-1);
-	}
-	else if (pid2 > 0)
-	{
-		close(fd[0]);
-		free(cmd2);
-		Free(arr2);
-	}
-	else if (pid2 == 0)
-	{
-		dup2(fd[0], STDIN_FILENO);
-		dup2(out, STDOUT_FILENO);
-		if (!cmd2)
-			exit(127);
-		if (execve(cmd2, arr2, NULL) == -1)
-			exit(EXIT_FAILURE);
-	}
-	waitpid(pid1, &status, 0);
-	waitpid(pid2, &status, 0);
-	return (WEXITSTATUS(status));
+	
 }

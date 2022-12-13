@@ -104,7 +104,7 @@ int main(int argc, char **argv, char *envp[])
 		perror("Error");
 	if (pipe(fd) < 0)
 	{
-		perror("Error: ");
+		perror("Error");
 		exit(-1);
 	}
 	if (in < 0)
@@ -117,7 +117,7 @@ int main(int argc, char **argv, char *envp[])
 	pid1 = fork();
 	if (pid1 < 0)
 	{
-		perror("Error: ");
+		perror("Error");
 		exit(-1);
 	}
 	else if (pid1 == 0)
@@ -138,7 +138,7 @@ int main(int argc, char **argv, char *envp[])
 	pid2 = fork();
 	if (pid2 < 0)
 	{
-		perror("Error: ");
+		perror("Error");
 		exit(-1);
 	}
 	else if (pid2 > 0)
