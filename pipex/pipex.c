@@ -10,7 +10,7 @@ char *cmd_path(char *cmd0, char **paths)
 	cmd2 = NULL;
 	if (access(cmd0, F_OK) == 0 && access(cmd0, X_OK) == 0)
 		return cmd0;
-	if(cmd0[0] != '/')
+	if (cmd0[0] != '/')
 		cmd1 = ft_strjoin("/", cmd0);
 	else
 		cmd1 = ft_strdup(cmd0);
@@ -37,7 +37,7 @@ void Free(char **arr)
 	int i;
 
 	i = 0;
-	while (arr[i])
+	while (arr[i] && arr)
 	{
 		free(arr[i]);
 		i++;
@@ -59,7 +59,6 @@ char *grep(char *arr[], char *str)
 	return NULL;
 }
 
-
 int main(int argc, char **argv, char *envp[])
 {
 	char **arr1;
@@ -75,33 +74,34 @@ int main(int argc, char **argv, char *envp[])
 	pid_t pid2;
 	int status;
 
+	if (argc != 5)
+		return -1;
 	exit_code = 0;
 	arr1 = ft_split2(argv[2], ' ', 3);
 	arr2 = ft_split2(argv[3], ' ', 3);
 	paths = ft_split(grep(envp, "PATH") + 5, ':');
-	int i = 0;
-	while (paths[i])
-	{
-		printf("%s\n", paths[i]);
-		i++;
-	}
-	
 	cmd1 = cmd_path(arr1[0], paths);
 	cmd2 = cmd_path(arr2[0], paths);
 	Free(paths);
 	in = open(argv[1], O_RDONLY, 0777);
 	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	if (out < 0)
+	{
+		perror("Error");
+		return -1;
+	}
 	if (in < 0)
-		ft_putendl_fd(ft_strjoin("no such file or directory: ", argv[1]), 2);
+	{
+		perror("Error");
+		return -1;
+	}
 	if (!cmd1 && in >= 0)
 	{
-		ft_putendl_fd(ft_strjoin("command not found: ", arr1[0]), 2);
-		cmd1 = arr1[0];
+		perror("Error");
+		cmd1 = ft_strdup(arr1[0]);
 	}
 	if (!cmd2)
-	{
-		ft_putendl_fd(ft_strjoin("command not found: ", arr2[0]), 2);
-	}
+		perror("Error");
 	if (pipe(fd) < 0)
 	{
 		perror("Error: ");
@@ -130,7 +130,6 @@ int main(int argc, char **argv, char *envp[])
 	}
 	else if (pid1 > 0)
 	{
-
 		close(fd[1]);
 		free(cmd1);
 		Free(arr1);
@@ -159,6 +158,6 @@ int main(int argc, char **argv, char *envp[])
 	}
 	waitpid(pid1, &status, 0);
 	waitpid(pid2, &status, 0);
-	system("leaks pipex");
+	//system("leaks pipex");
 	return (WEXITSTATUS(status));
 }

@@ -79,18 +79,16 @@ int main(int argc, char **argv, char *envp[])
 	arr1 = ft_split2(argv[2], ' ', 3);
 	arr2 = ft_split2(argv[3], ' ', 3);
 	paths = ft_split(grep(envp, "PATH") + 5, ':');
-	int i = 0;
-	while (paths[i])
-	{
-		printf("%s\n", paths[i]);
-		i++;
-	}
-	
 	cmd1 = cmd_path(arr1[0], paths);
 	cmd2 = cmd_path(arr2[0], paths);
 	Free(paths);
 	in = open(argv[1], O_RDONLY, 0777);
 	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	if (out < 0)
+	{
+		perror("Error");
+		return 1;
+	}
 	if (in < 0)
 		ft_putendl_fd(ft_strjoin("no such file or directory: ", argv[1]), 2);
 	if (!cmd1 && in >= 0)
@@ -104,7 +102,7 @@ int main(int argc, char **argv, char *envp[])
 	}
 	if (pipe(fd) < 0)
 	{
-		perror("Error: ");
+		perror("Error");
 		exit(-1);
 	}
 	if (in < 0)
@@ -117,7 +115,7 @@ int main(int argc, char **argv, char *envp[])
 	pid1 = fork();
 	if (pid1 < 0)
 	{
-		perror("Error: ");
+		perror("Error");
 		exit(-1);
 	}
 	else if (pid1 == 0)
@@ -139,7 +137,7 @@ int main(int argc, char **argv, char *envp[])
 	pid2 = fork();
 	if (pid2 < 0)
 	{
-		perror("Error: ");
+		perror("Error");
 		exit(-1);
 	}
 	else if (pid2 > 0)
@@ -159,6 +157,5 @@ int main(int argc, char **argv, char *envp[])
 	}
 	waitpid(pid1, &status, 0);
 	waitpid(pid2, &status, 0);
-	system("leaks pipex");
 	return (WEXITSTATUS(status));
 }
