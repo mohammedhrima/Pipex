@@ -45,16 +45,23 @@ void Free(char **arr)
 	free(arr);
 }
 
-char *grep(char *arr[], char *str)
+char *grep(char **arr, char *str)
 {
 	int i;
 
 	i = 0;
-	while (arr[i])
+	// while (arr && arr[i])
+	// {
+	// 	if (ft_strstr(arr[i], str))
+	// 		return (arr[i]);
+	// 	i++;
+	// }
+	
+	while (*arr)
 	{
-		if (ft_strstr(arr[i], str))
-			return (arr[i]);
-		i++;
+		if (!ft_strncmp(str, *arr, ft_strlen(str)))
+			return (*arr + 5);
+		arr++;
 	}
 	return NULL;
 }
@@ -79,21 +86,21 @@ int main(int argc, char **argv, char *envp[])
 	exit_code = 0;
 	arr1 = ft_split2(argv[2], ' ', 3);
 	arr2 = ft_split2(argv[3], ' ', 3);
-	paths = ft_split(grep(envp, "PATH") + 5, ':');
+	paths = ft_split(grep(envp, "PATH"), ':');
+	if (!paths)
+	{
+		printf("path not found.\n");
+		exit(1);
+	}
 	cmd1 = cmd_path(arr1[0], paths);
 	cmd2 = cmd_path(arr2[0], paths);
 	Free(paths);
 	in = open(argv[1], O_RDONLY, 0777);
-	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	if (out < 0)
-	{
-		perror("Error");
-		return -1;
-	}
+	
 	if (in < 0)
 	{
 		perror("Error");
-		return -1;
+		//return -1;
 	}
 	if (!cmd1 && in >= 0)
 	{
@@ -111,7 +118,7 @@ int main(int argc, char **argv, char *envp[])
 	{
 		free(cmd1);
 		cmd1 = NULL;
-		Free(arr1);
+		// Free(arr1);
 		arr1 = NULL;
 	}
 	pid1 = fork();
@@ -120,7 +127,7 @@ int main(int argc, char **argv, char *envp[])
 		perror("Error");
 		exit(-1);
 	}
-	else if (pid1 == 0)
+	else if (in >= 0 && pid1 == 0)
 	{
 		dup2(in, STDIN_FILENO);
 		close(fd[0]);
@@ -132,8 +139,9 @@ int main(int argc, char **argv, char *envp[])
 	{
 		close(fd[1]);
 		free(cmd1);
-		Free(arr1);
-		close(in);
+		//Free(arr1);
+		if (in >= 0)
+			close(in);
 	}
 	pid2 = fork();
 	if (pid2 < 0)
@@ -145,10 +153,16 @@ int main(int argc, char **argv, char *envp[])
 	{
 		close(fd[0]);
 		free(cmd2);
-		Free(arr2);
+		// Free(arr2);
 	}
 	else if (pid2 == 0)
 	{
+		out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+		if (out < 0)
+		{
+			perror("Error");
+			return -1;
+		}
 		dup2(fd[0], STDIN_FILENO);
 		dup2(out, STDOUT_FILENO);
 		if (!cmd2)

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mhrima <mhrima@student.42.fr>              +#+  +:+       +#+         #
+#    By: olahrizi <olahrizi@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/09 08:14:10 by mhrima            #+#    #+#              #
-#    Updated: 2022/12/11 15:00:18 by mhrima           ###   ########.fr        #
+#    Updated: 2022/12/21 21:54:35 by olahrizi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ NAME = pipex
 all : $(NAME)
 
 $(NAME) : $(SRC)
-	$(CC) $(SRC) -o $(NAME)
+	$(CC) $(SRC) -o $(NAME) -fsanitize=address -g3
 
 #bonus: $(OBJS_BONUS) $(OBJS)
 #	$(AR) $(NAME) $(OBJS_BONUS) $(OBJS)
