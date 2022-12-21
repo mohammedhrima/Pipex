@@ -37,7 +37,7 @@ void Free(char **arr)
 	int i;
 
 	i = 0;
-	while (arr[i] && arr)
+	while (arr && arr[i])
 	{
 		free(arr[i]);
 		i++;
@@ -45,23 +45,16 @@ void Free(char **arr)
 	free(arr);
 }
 
-char *grep(char **arr, char *str)
+char *grep(char *arr[], char *str)
 {
 	int i;
 
 	i = 0;
-	// while (arr && arr[i])
-	// {
-	// 	if (ft_strstr(arr[i], str))
-	// 		return (arr[i]);
-	// 	i++;
-	// }
-	
-	while (*arr)
+	while (arr && arr[i])
 	{
-		if (!ft_strncmp(str, *arr, ft_strlen(str)))
-			return (*arr + 5);
-		arr++;
+		if (ft_strstr(arr[i], str))
+			return (arr[i] + 5);
+		i++;
 	}
 	return NULL;
 }
@@ -73,53 +66,62 @@ int main(int argc, char **argv, char *envp[])
 	char *cmd1;
 	char *cmd2;
 	char **paths;
+	char *Error;
 	int in;
 	int out;
 	int fd[2];
-	int exit_code;
 	pid_t pid1;
 	pid_t pid2;
 	int status;
 
 	if (argc != 5)
 		return -1;
-	exit_code = 0;
-	arr1 = ft_split2(argv[2], ' ', 3);
-	arr2 = ft_split2(argv[3], ' ', 3);
 	paths = ft_split(grep(envp, "PATH"), ':');
 	if (!paths)
 	{
-		printf("path not found.\n");
+		ft_putendl_fd("path not found.\n", 2);
 		exit(1);
 	}
+	arr1 = ft_split2(argv[2], ' ', 3);
+	arr2 = ft_split2(argv[3], ' ', 3);
 	cmd1 = cmd_path(arr1[0], paths);
 	cmd2 = cmd_path(arr2[0], paths);
 	Free(paths);
 	in = open(argv[1], O_RDONLY, 0777);
-	
+	out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	if (out < 0)
+	{
+		Error = ft_strjoin("No such file or directory: ", argv[4]);
+		ft_putendl_fd(Error, 2);
+		free(Error);
+		return -1;
+	}
 	if (in < 0)
 	{
-		perror("Error");
-		//return -1;
+		Error = ft_strjoin("No such file or directory: ", argv[1]);
+		ft_putendl_fd(Error, 2);
+		free(Error);
+		free(cmd1);
+		cmd1 = NULL;
+		Free(arr1);
+		arr1 = NULL;
 	}
 	if (!cmd1 && in >= 0)
 	{
-		perror("Error");
-		cmd1 = ft_strdup(arr1[0]);
+		Error = ft_strjoin("command not found: ", arr1[0]);
+		ft_putendl_fd(Error, 2);
+		free(Error);
 	}
 	if (!cmd2)
-		perror("Error");
+	{
+		Error = ft_strjoin("command not found: ", arr2[0]);
+		ft_putendl_fd(Error, 2);
+		free(Error);
+	}
 	if (pipe(fd) < 0)
 	{
 		perror("Error");
 		exit(-1);
-	}
-	if (in < 0)
-	{
-		free(cmd1);
-		cmd1 = NULL;
-		// Free(arr1);
-		arr1 = NULL;
 	}
 	pid1 = fork();
 	if (pid1 < 0)
@@ -127,7 +129,7 @@ int main(int argc, char **argv, char *envp[])
 		perror("Error");
 		exit(-1);
 	}
-	else if (in >= 0 && pid1 == 0)
+	else if (pid1 == 0)
 	{
 		dup2(in, STDIN_FILENO);
 		close(fd[0]);
@@ -139,9 +141,8 @@ int main(int argc, char **argv, char *envp[])
 	{
 		close(fd[1]);
 		free(cmd1);
-		//Free(arr1);
-		if (in >= 0)
-			close(in);
+		Free(arr1);
+		close(in);
 	}
 	pid2 = fork();
 	if (pid2 < 0)
@@ -153,16 +154,10 @@ int main(int argc, char **argv, char *envp[])
 	{
 		close(fd[0]);
 		free(cmd2);
-		// Free(arr2);
+		Free(arr2);
 	}
 	else if (pid2 == 0)
 	{
-		out = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0777);
-		if (out < 0)
-		{
-			perror("Error");
-			return -1;
-		}
 		dup2(fd[0], STDIN_FILENO);
 		dup2(out, STDOUT_FILENO);
 		if (!cmd2)
