@@ -10,13 +10,13 @@ char *cmd_path(char *cmd0, char **paths)
 	cmd2 = NULL;
 	if (access(cmd0, F_OK) == 0 && access(cmd0, X_OK) == 0)
 		return cmd0;
-	if (cmd0[0] != '/')
+	if (cmd0 && cmd0[0] != '/')
 		cmd1 = ft_strjoin("/", cmd0);
 	else
 		cmd1 = ft_strdup(cmd0);
 	if (access(cmd1, F_OK) == 0 && access(cmd1, X_OK) == 0)
 		return cmd1;
-	while (paths && cmd0 && paths[i])
+	while (paths && cmd1 && paths[i])
 	{
 		cmd2 = ft_strjoin(paths[i], cmd1);
 		if (access(cmd2, F_OK) == 0 && access(cmd2, X_OK) == 0)
@@ -77,11 +77,6 @@ int main(int argc, char **argv, char *envp[])
 	if (argc != 5)
 		return -1;
 	paths = ft_split(grep(envp, "PATH"), ':');
-	if (!paths)
-	{
-		ft_putendl_fd("path not found.\n", 2);
-		exit(1);
-	}
 	arr1 = ft_split2(argv[2], ' ', 3);
 	arr2 = ft_split2(argv[3], ' ', 3);
 	cmd1 = cmd_path(arr1[0], paths);
@@ -167,6 +162,6 @@ int main(int argc, char **argv, char *envp[])
 	}
 	waitpid(pid1, &status, 0);
 	waitpid(pid2, &status, 0);
-	//system("leaks pipex");
+	system("leaks pipex");
 	return (WEXITSTATUS(status));
 }

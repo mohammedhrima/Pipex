@@ -6,6 +6,7 @@
 #include <stdio.h>*/
 /*
 	remove all printfs
+	bonus rules
 */
 char *cmd_path(char *cmd0, char **paths)
 {
@@ -53,20 +54,6 @@ void Free(char **arr)
 	arr = NULL;
 }
 
-void Free2(char **arr, int len)
-{
-	int i;
-
-	i = 0;
-	while (arr && i < len)
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-	arr = NULL;
-}
-
 char *grep(char *arr[], char *str)
 {
 	int i;
@@ -101,6 +88,7 @@ int main(int argc, char **argv, char **envp)
 		pipes[i] = (int *)malloc(2 * sizeof(int));
 		i++;
 	}
+
 	cmd = NULL;
 	arr = NULL;
 	if (argc < 5)
@@ -187,12 +175,12 @@ int main(int argc, char **argv, char **envp)
 			close(pipes[j][1]);
 		j++;
 	}
+	free(pipes);
 	i = 0;
 	while (i < num)
 	{
 		waitpid(pids[i], &status, 0);
 		i++;
 	}
-	//while(1);
 	return (WEXITSTATUS(status));
 }
