@@ -6,7 +6,7 @@
 #    By: mhrima <mhrima@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/09 08:14:10 by mhrima            #+#    #+#              #
-#    Updated: 2022/12/11 15:00:18 by mhrima           ###   ########.fr        #
+#    Updated: 2022/12/22 01:49:51 by mhrima           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,15 +14,15 @@ CC = cc
 #CFLAGS = -Wall -Wextra -Werror
 RM = rm -rf
 
-SRC = pipex.c libft/libft.a
-NAME = pipex 
+SRC = 002.c libft/libft.a 
+NAME = ./002 
 
 
 
 all : $(NAME)
 
 $(NAME) : $(SRC)
-	$(CC) $(SRC) -o $(NAME)
+	$(CC) $(SRC) -o $(NAME) -fsanitize=address -g3
 
 #bonus: $(OBJS_BONUS) $(OBJS)
 #	$(AR) $(NAME) $(OBJS_BONUS) $(OBJS)
