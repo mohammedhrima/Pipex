@@ -5,38 +5,34 @@
 #                                                     +:+ +:+         +:+      #
 #    By: mhrima <mhrima@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/12/23 04:46:24 by mhrima            #+#    #+#              #
-#    Updated: 2022/12/23 14:54:11 by mhrima           ###   ########.fr        #
+#    Created: 2022/12/09 08:14:10 by mhrima            #+#    #+#              #
+#    Updated: 2022/12/23 03:25:32 by mhrima           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+#CFLAGS = -Wall -Wextra -Werror
 RM = rm -rf
 
-CFILES = pipex.c 0.multi_pipe.c 0.here_doc.c 
-LIB = libft/libft.a
+SRC = pipex.c libft/libft.a 
 NAME = pipex
 
-OFILES = $(CFILES:.c=.o)
+
 
 all : $(NAME)
 
-$(LIB) :
-	make -C ./libft
-	make clean -C ./libft
-
-$(NAME) : $(OFILES) $(LIB)
-	$(CC) $(CFLAGS) $(OFILES) $(LIB) -o $(NAME) 
+$(NAME) : $(SRC)
+	$(CC) $(SRC) -o $(NAME) 
+#-fsanitize=address -g3
 
 bonus: $(NAME)
-	$(CC) $(CFLAGS) $(OFILES) $(LIB) -o $(NAME) 
+	$(CC) $(SRC) -o $(NAME) 
+
 
 clean : 
-	$(RM) $(OFILES)
+	$(RM) $(NAME)
 	
 fclean : clean
-	$(RM) $(NAME) $(LIB)
+	$(RM) $(NAME)
 
 re : fclean all
