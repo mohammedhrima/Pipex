@@ -1,29 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex2.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhrima <mhrima@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/23 04:46:12 by mhrima            #+#    #+#             */
+/*   Updated: 2022/12/23 07:20:37 by mhrima           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
-/*#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <stdio.h>*/
-/*
-	remove all printfs
-	bonus rules
-*/
-char *cmd_path(char *cmd0, char **paths)
+
+char *get_path_from_env_path(char *cmd1, char **paths)
 {
-	int i;
-	char *cmd1;
 	char *cmd2;
+	int	i;
 
 	i = 0;
-	cmd2 = NULL;
-	if (access(cmd0, F_OK) == 0 && access(cmd0, X_OK) == 0)
-		return cmd0;
-	if (cmd0 && cmd0[0] != '/')
-		cmd1 = ft_strjoin("/", cmd0);
-	else
-		cmd1 = ft_strdup(cmd0);
-	if (access(cmd1, F_OK) == 0 && access(cmd1, X_OK) == 0)
-		return cmd1;
 	while (paths && cmd1 && paths[i])
 	{
 		cmd2 = ft_strjoin(paths[i], cmd1);
@@ -38,6 +32,25 @@ char *cmd_path(char *cmd0, char **paths)
 	}
 	free(cmd1);
 	return (cmd2);
+}
+
+char *cmd_path(char *cmd0, char **paths)
+{
+	int i;
+	char *cmd1;
+	char *cmd2;
+
+	i = 0;
+	cmd2 = NULL;
+	if (access(cmd0, F_OK) == 0 && access(cmd0, X_OK) == 0)
+		return cmd0;
+	if(cmd0 && cmd0[0] != '/')
+		cmd1 = ft_strjoin("/", cmd0);
+	else
+		cmd1 = ft_strdup(cmd0);
+	if (access(cmd1, F_OK) == 0 && access(cmd1, X_OK) == 0)
+		return cmd1;
+	return (get_path_from_env_path(cmd1, paths));
 }
 
 void Free(char **arr)
@@ -103,6 +116,7 @@ int main(int argc, char **argv, char **envp)
 		close(pipes2[0]);
 		close(pipes2[1]);
 		// execute commands
+		pids = (int *)malloc(3 * sizeof(int));
 		pipes = (int **)malloc(3 * sizeof(int *));
 		i = 0;
 		while (i < 3)
@@ -113,7 +127,7 @@ int main(int argc, char **argv, char **envp)
 		cmd = NULL;
 		arr = NULL;
 		pipes[2][1] = open(argv[argc - 1], O_WRONLY | O_APPEND | O_CREAT, 0644);
-		pids = (int *)malloc((3) * sizeof(int));
+		
 		if (pipes[2][1] < 0)
 		{
 			Error = ft_strjoin("permission denied: ", argv[argc - 1]);
@@ -165,8 +179,10 @@ int main(int argc, char **argv, char **envp)
 				dup2(pipes[i + 1][1], STDOUT_FILENO);
 				if (execve(cmd, arr, envp) == -1)
 				{
-					if(i == 0) exit(0);
-					else exit(127);
+					if (i == 2)
+						exit(127);
+					else
+						exit(0);
 				}
 			}
 			else if (pids[0] > 0)
@@ -262,8 +278,10 @@ int main(int argc, char **argv, char **envp)
 				dup2(pipes[i + 1][1], STDOUT_FILENO);
 				if (execve(cmd, arr, envp) == -1)
 				{
-					if(i == 0) exit(0);
-					else exit(127);
+					if (i == 2)
+						exit(127);
+					else
+						exit(0);
 				}
 					
 			}
@@ -285,7 +303,6 @@ int main(int argc, char **argv, char **envp)
 				close(pipes[j][1]);
 			j++;
 		}
-		free(pipes);
 		i = 0;
 		while (i < num)
 		{
