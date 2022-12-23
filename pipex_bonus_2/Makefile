@@ -6,7 +6,7 @@
 #    By: mhrima <mhrima@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/09 08:14:10 by mhrima            #+#    #+#              #
-#    Updated: 2022/12/22 14:48:49 by mhrima           ###   ########.fr        #
+#    Updated: 2022/12/23 03:25:32 by mhrima           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,8 +25,8 @@ $(NAME) : $(SRC)
 	$(CC) $(SRC) -o $(NAME) 
 #-fsanitize=address -g3
 
-#bonus: $(OBJS_BONUS) $(OBJS)
-#	$(AR) $(NAME) $(OBJS_BONUS) $(OBJS)
+bonus: $(NAME)
+	$(CC) $(SRC) -o $(NAME) 
 
 
 clean : 

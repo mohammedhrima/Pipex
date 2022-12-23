@@ -83,7 +83,7 @@ int main(int argc, char **argv, char **envp)
 	char *Exit;
 
 	if (argc < 5)
-		exit(-1);
+		exit(1);
 	if (ft_strcmp(argv[1], "here_doc") == 0)
 	{
 		Exit = argv[2];
@@ -119,7 +119,7 @@ int main(int argc, char **argv, char **envp)
 			Error = ft_strjoin("permission denied: ", argv[argc - 1]);
 			ft_putendl_fd(Error, 2);
 			free(Error);
-			exit(-1);
+			exit(1);
 		}
 		paths = ft_split(grep(envp, "PATH"), ':');
 		i = 0;
@@ -163,8 +163,11 @@ int main(int argc, char **argv, char **envp)
 				}
 				dup2(pipes[i][0], STDIN_FILENO);
 				dup2(pipes[i + 1][1], STDOUT_FILENO);
-				if (execve(cmd, arr, NULL) == -1)
-					exit(EXIT_FAILURE);
+				if (execve(cmd, arr, envp) == -1)
+				{
+					if(i == 0) exit(0);
+					else exit(127);
+				}
 			}
 			else if (pids[0] > 0)
 			{
@@ -176,7 +179,7 @@ int main(int argc, char **argv, char **envp)
 			i++;
 		}
 		i = 0;
-		while (i < 3)
+		while (i < 2)
 		{
 			waitpid(pids[i], &status, 0);
 			i++;
@@ -195,15 +198,15 @@ int main(int argc, char **argv, char **envp)
 		}
 		cmd = NULL;
 		arr = NULL;
-		i = 1;
-		pipes[0][0] = open(argv[1], O_RDONLY, 0777);
-		pipes[num][1] = open(argv[argc - 1], O_WRONLY | O_TRUNC | O_CREAT, 0755);
+		
+		pipes[0][0] = open(argv[1], O_RDONLY);
+		pipes[num][1] = open(argv[argc - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 		if (pipes[num][1] < 0)
 		{
 			Error = ft_strjoin("permission denied: ", argv[argc - 1]);
 			ft_putendl_fd(Error, 2);
 			free(Error);
-			exit(-1);
+			exit(1);
 		}
 		if (pipes[0][0] < 0)
 		{
@@ -211,6 +214,7 @@ int main(int argc, char **argv, char **envp)
 			ft_putendl_fd(Error, 2);
 			free(Error);
 		}
+		i = 1;
 		paths = ft_split(grep(envp, "PATH"), ':');
 		while (i < num)
 		{
@@ -256,13 +260,17 @@ int main(int argc, char **argv, char **envp)
 				}
 				dup2(pipes[i][0], STDIN_FILENO);
 				dup2(pipes[i + 1][1], STDOUT_FILENO);
-				if (execve(cmd, arr, NULL) == -1)
-					exit(EXIT_FAILURE);
+				if (execve(cmd, arr, envp) == -1)
+				{
+					if(i == 0) exit(0);
+					else exit(127);
+				}
+					
 			}
 			else if (pids[i] > 0)
 			{
 				close(pipes[i][0]);
-				close(pipes[i][1]);
+				close(pipes[i + 1][1]);
 				cmd = NULL;
 				arr = NULL;
 			}
@@ -285,6 +293,5 @@ int main(int argc, char **argv, char **envp)
 			i++;
 		}
 	}
-
 	return (WEXITSTATUS(status));
 }
