@@ -88,7 +88,7 @@ void	open_here_doc(char *Exit)
 	}
 	var.str1 = NULL;
 	var.str2 = ft_calloc(2, 1);
-	while (!var.str1 || ft_strcmp(var.str2, Exit))
+	while (!var.str1 || ft_strcmp(var.str1, Exit))
 		read_form_her_doc(&var, Exit);
 	close(var.pipes2[1]);
 	close(var.pipes2[0]);
