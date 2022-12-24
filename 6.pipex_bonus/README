@@ -1,0 +1,4 @@
+1- check if argv[1] = here_doc
+2- get key name "LIMITER" && open pipe -> the key will be used to close pipe
+3- keep the pipe opened and pipe[0] as stin and pipe[1] as stdout
+4- at the take output of first cmd and send it to the next command and continue as usual
